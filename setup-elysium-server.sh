@@ -262,9 +262,9 @@ LimitNOFILE=10000
 WantedBy=multi-user.target
 EOF
     
-    run_silent "Setting permissions 1/3" "chown -R steam:steam ${INSTALL_PATH}"
-	run_silent "Setting permissions 2/3" "chmod -R 755 ${INSTALL_PATH}"
-	run_silent "Setting permissions 3/3" "chmod +x ${INSTALL_PATH}/ElysiumServer"
+    run_silent "Setting Ownership" "chown -R steam:steam ${INSTALL_PATH}"
+	run_silent "Setting Permissions" "chmod -R 755 ${INSTALL_PATH}"
+	run_silent "Setting Executable" "chmod +x ${INSTALL_PATH}/ElysiumServer"
     run_silent "Reloading systemd daemon" "systemctl daemon-reload"
     run_silent "Checking Public IP" "ExternalIP4=$(curl -s https://ipv4.myip.wtf/text)"
 
@@ -300,7 +300,10 @@ display_completion() {
     else
         echo -e "Your server is ${YELLOW}not enabled${NC} to start automatically at boot."
     fi
-            
+
+    run_silent "Reassuring Ownership" "chown -R steam:steam ${INSTALL_PATH}"
+	run_silent "Reassuring Permissions" "chmod -R 755 ${INSTALL_PATH}"
+			
     echo ""
     echo -e 'Do you want to start the server now? (y/n): '
     read -r START_NOW
