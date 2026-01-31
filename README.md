@@ -11,7 +11,7 @@ You need to have software-properties-common installed as well as non-free reposi
 ## Documentation
 
 If you have no clue of Linux, you may also use my step-by-step manual to set up the machine to be able to run the script:
-!!!  TO FOLLOW
+https://github.com/lennoknet/elysium-server/blob/main/preparation.md
 NAT and Port rules for your router is then your only thing you need to work on yourself.
 
 ## Installation
