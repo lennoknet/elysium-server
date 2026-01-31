@@ -113,7 +113,7 @@ configure_server() {
     done
     
     # Data Path
-    read -p "$(echo -e "${BOLD}Data Directory${NC} [${SERVER_DATA}]: ")" input
+    read -p "$(echo -e "${BOLD}Data Path${NC} [${SERVER_DATA}]: ")" input
     SERVER_DATA=${input:-"$SERVER_DATA"}
     
     # World Path
@@ -178,8 +178,8 @@ create_steam_user() {
         echo -e "   ${YELLOW}Steam user already exists. Skipping.${NC}"
     else
         STEAM_PASSWORD=$(openssl rand -base64 12)
-        run_silent "Creating steam user" "useradd -m -s /bin/bash steam"
-        run_silent "Setting steam user password" "echo 'steam:${STEAM_PASSWORD}' | chpasswd"
+        run_silent "Creating steam user" "/usr/sbin/useradd -m -s /bin/bash steam"
+        run_silent "Setting steam user password" "echo 'steam:${STEAM_PASSWORD}' | /usr/sbin/chpasswd"
     fi
 }
 
@@ -187,25 +187,28 @@ create_steam_user() {
 install_steamcmd() {
     section_header "Installing SteamCMD"
     
-    run_silent "Creating Steam directory" "runuser -l steam -c 'mkdir -p ~/Steam'"
-    run_silent "Downloading SteamCMD" "runuser -l steam -c 'cd ~/Steam && curl -sqL \"https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz\" | tar zxvf -'"
+    run_silent "Creating Steam directory" "/usr/sbin/runuser -l steam -c 'mkdir -p ~/Steam'"
+    run_silent "Downloading SteamCMD" "/usr/sbin/runuser -l steam -c 'cd ~/Steam && curl -sqL \"https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz\" | tar zxvf -'"
 }
 
 # Function to install Elysium server
-install_elysium_server() {
+install_elys_server() {
     section_header "Installing Elysium Server"
     
     echo -e "   ${YELLOW}⚙️  Installing Echoes of Elysium server (this may take a while)...${NC}"
     
-    if runuser -l steam -c "~/Steam/steamcmd.sh +login anonymous +force_install_dir ${INSTALL_PATH} +app_update 2915100 -beta ${SERVER_CHANNEL} validate +quit" > /dev/null 2>&1; then
+    if /usr/sbin/runuser -l steam -c "~/Steam/steamcmd.sh +force_install_dir ${INSTALL_PATH} +login anonymous +app_update 2915100 -beta ${SERVER_CHANNEL} validate +quit" > /dev/null 2>&1; then
         echo -e "   ${GREEN}✓ Elysium server installed successfully${NC}"
     else
         echo -e "   ${RED}✗ Failed to install Elysium server${NC}"
         echo -e "   ${RED}Please check your internet connection and try again${NC}"
         exit 1
     fi
-    
-    run_silent "Copying steamclient.so" "mkdir -p \"${INSTALL_PATH}/linux64/\" && ln -s \"${INSTALL_PATH}/libsteam_api.so \"${INSTALL_PATH}/linux64/\"
+
+
+    run_silent "Remove previous symlink if exist" "rm -f \"${INSTALL_PATH}/linux64/libsteam_api.so\""
+    run_silent "Creating symlink for libsteam_api.so" "mkdir -p \"${INSTALL_PATH}/linux64/\" && ln -s \"${INSTALL_PATH}/libsteam_api.so\" \"${INSTALL_PATH}/linux64/\""
+
 }
 
 # Function to create server config
@@ -226,7 +229,7 @@ jo -p \
     backupsEnabled=${SERVER_BACKUPS} \
     backupFreqMins=${SERVER_BAK_FREQ} \
     maxBackups=${SERVER_BAK_MAX} \
-    > \"${INSTALL_PATH}/config.json
+    > ${INSTALL_PATH}/config.json
 
 
     
@@ -246,8 +249,8 @@ After=network.target
 [Service]
 Type=simple
 User=steam
-WorkingDirectory=/home/steam/Steam/elys-server
-Environment="LD_LIBRARY_PATH=/home/steam/Steam/elys-server:/home/steam/Steam/elys-server/linux64"
+WorkingDirectory=${INSTALL_PATH}
+Environment="LD_LIBRARY_PATH=${INSTALL_PATH}:${INSTALL_PATH}/linux64"
 Environment="SteamAppId=2644050"
 ExecStartPre=/home/steam/Steam/steamcmd.sh +force_install_dir ${INSTALL_PATH} +login anonymous +app_update 2915100 -beta ${SERVER_CHANNEL} validate +quit
 ExecStart=${INSTALL_PATH}/ElysiumServer --config ${INSTALL_PATH}/config.json
@@ -297,9 +300,9 @@ display_completion() {
     else
         echo -e "Your server is ${YELLOW}not enabled${NC} to start automatically at boot."
     fi
-    
+            
     echo ""
-    echo -e 'Do you want to start the server now (y/n): '
+    echo -e 'Do you want to start the server now? (y/n): '
     read -r START_NOW
     if [[ "${START_NOW}" =~ ^[Yy]$ ]]; then
         echo -e "${YELLOW}Starting Elysium server...${NC}"
@@ -350,11 +353,11 @@ main() {
     echo -e "   ${BOLD}Start on Boot:${NC} ${START_ON_BOOT}"
     echo -e "   ${BOLD}Installation Path:${NC} ${INSTALL_PATH}"
     echo ""
-    echo -e 'Proceed with installation? (y/n): '
+    echo -e "Proceed with installation? (y/n): "
     read -r CONFIRM
     
-    if [[ ! '${CONFIRM}' =~ ^[Yy]$ ]]; then
-        echo -e '${RED}Installation cancelled.${NC}'
+    if [[ ! "${CONFIRM}" =~ ^[Yy]$ ]]; then
+        echo -e "${RED}Installation cancelled.${NC}"
         exit 0
     fi
     
@@ -362,7 +365,7 @@ main() {
     install_dependencies
     create_steam_user
     install_steamcmd
-    install_elysium_server
+    install_elys_server
     create_server_config
     create_systemd_service
     display_completion
