@@ -354,7 +354,7 @@ main() {
     read -r CONFIRM
     
     if [[ ! "${CONFIRM}" =~ ^[Yy]$ ]]; then
-        echo -e "${RED}Installation cancelled.${NC}"
+        echo -e '${RED}Installation cancelled.${NC}'
         exit 0
     fi
     
