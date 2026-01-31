@@ -299,7 +299,7 @@ display_completion() {
     fi
     
     echo ""
-    echo -e "Do you want to start the server now (y/n): "
+    echo -e 'Do you want to start the server now (y/n): '
     read -r START_NOW
     if [[ "${START_NOW}" =~ ^[Yy]$ ]]; then
         echo -e "${YELLOW}Starting Elysium server...${NC}"
