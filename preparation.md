@@ -12,7 +12,7 @@ Let's say it's 192.168.42.105 here but since it is given by DHCP from your route
 This should be outside of the DHCP pool your router is assigning. My DHCP assigns 192.168.42.100 to 192.168.42.199 so I am going to pick 192.168.42.200 just outside of the area.
 Surely you may also add the MAC address of this machine to your DHCP server, then you may continue at "We install git".
 
-For easy copy & paste of commands we now go to connect via ssh from your main machine, if it is windows, you might go and install putty or you can also easily use standart CMD and enter
+For easy copy & paste of commands we now go to connect via ssh from your main machine, if it is windows, you might go and install putty or you can also easily use standard CMD and enter
 
 ``ssh control@192.168.42.105`` use your IP and password (see above)
 
