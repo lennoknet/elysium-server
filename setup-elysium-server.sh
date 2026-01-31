@@ -321,7 +321,7 @@ main() {
     echo -e "This script will install and configure a Elysium dedicated server."
     echo -e "It will perform the following steps:"
     echo -e "  1. Install required dependencies"
-    echo -e "  2. Configure firewall rules"
+    echo -e "  2. -removed-"
     echo -e "  3. Create a steam user"
     echo -e "  4. Install SteamCMD"
     echo -e "  5. Download and install the Elysium server"
