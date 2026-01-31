@@ -353,7 +353,7 @@ main() {
     echo -e 'Proceed with installation? (y/n): '
     read -r CONFIRM
     
-    if [[ ! "${CONFIRM}" =~ ^[Yy]$ ]]; then
+    if [[ ! '${CONFIRM}' =~ ^[Yy]$ ]]; then
         echo -e '${RED}Installation cancelled.${NC}'
         exit 0
     fi
