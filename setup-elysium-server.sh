@@ -350,7 +350,7 @@ main() {
     echo -e "   ${BOLD}Start on Boot:${NC} ${START_ON_BOOT}"
     echo -e "   ${BOLD}Installation Path:${NC} ${INSTALL_PATH}"
     echo ""
-    echo -e "Proceed with installation? (y/n): "
+    echo -e 'Proceed with installation? (y/n): '
     read -r CONFIRM
     
     if [[ ! "${CONFIRM}" =~ ^[Yy]$ ]]; then
