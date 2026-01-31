@@ -124,6 +124,6 @@ Download the installation script:
 
 ``su`` and root password
 
-``./setup-vein-server.sh``
+``./setup-elysium-server.sh``
 
 Follow instructions on your screen.
